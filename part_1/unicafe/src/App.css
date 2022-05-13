@@ -1,0 +1,18 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background-color: #282c34;
+  color: white;
+  padding-top: 6rem;
+}
+
+.App-header {
+  display: flex;
+  min-height: 5rem;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+}
+
+h1 {
+  font-size: 2rem;
+}
