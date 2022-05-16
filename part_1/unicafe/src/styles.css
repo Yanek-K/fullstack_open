@@ -16,3 +16,12 @@
 h1 {
   font-size: 2rem;
 }
+
+.Buttons {
+  display: inline;
+  justify-content: center;
+}
+
+.StatisticsLine__table {
+  margin: 0 auto 0 auto;
+}

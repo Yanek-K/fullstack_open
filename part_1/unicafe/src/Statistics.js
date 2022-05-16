@@ -1,4 +1,5 @@
 import React from "react";
+import StatisticsLine from "./StatisticsLine";
 
 const Statistics = ({ good, neutral, bad }) => {
   const total = good + neutral + bad;
@@ -16,15 +17,13 @@ const Statistics = ({ good, neutral, bad }) => {
       <div className="Statistics">
         <section className="Statistics__wrapper">
           <h2>Statistics</h2>
-          <div className="Statistics__info">
-            <p>Good : {good}</p>
-            <p>Neutral : {neutral}</p>
-            <p>Bad : {bad}</p>
-            <p>Total: {total}</p>
-            <p>Average : {average}</p>
-            <p>
-              Positive : {positive} {"%"}
-            </p>
+          <div>
+            <StatisticsLine text="Good" value={good} />
+            <StatisticsLine text="Neutral" value={neutral} />
+            <StatisticsLine text="Bad" value={bad} />
+            <StatisticsLine text="Total" value={total} />
+            <StatisticsLine text="Average" value={average} />
+            <StatisticsLine text="Positive" value={positive} />
           </div>
         </section>
       </div>
