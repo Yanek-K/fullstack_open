@@ -1,7 +1,7 @@
 import React from "react";
 
 const StatisticsLine = ({ text, value }) => {
-  const positive = () => {
+  const isPositive = () => {
     return text === "Positive" ? "%" : "";
   };
 
@@ -13,7 +13,7 @@ const StatisticsLine = ({ text, value }) => {
             <td>{text}</td>
             <td>
               {value}
-              {positive()}
+              {isPositive()}
             </td>
           </tr>
         </tbody>
