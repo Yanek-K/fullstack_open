@@ -1,0 +1,14 @@
+.App {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  line-height: 2rem;
+}
