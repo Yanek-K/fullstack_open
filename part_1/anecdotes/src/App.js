@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const clog = console.log;
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often",
@@ -12,15 +14,28 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [points, setPoints] = useState([0, 0, 0, 0, 0, 0, 0]);
+
+  const increasePoint = () => {
+    const newPoints = [...points];
+    newPoints[selected] += 1;
+    setPoints(newPoints);
+  };
 
   const nextAnecdote = () => {
-    setSelected(Math.floor(Math.random(1) * 7));
+    setSelected(Math.floor(Math.random() * 7));
   };
-  console.log(selected);
+
+  const highestVote = points.indexOf(Math.max(...points));
+  const bestQuote = anecdotes[highestVote];
   return (
-    <div>
-      <p>{anecdotes[selected]}</p>
+    <div className="main">
+      <h1>{anecdotes[selected]}</h1>
+      <p>This Quote has {points[selected]} votes</p>
+      <button onClick={increasePoint}>Vote For This</button>
       <button onClick={nextAnecdote}>Next Anecdote</button>
+      <h2>Anecdote with the most votes:</h2>
+      <p>{bestQuote}</p>
     </div>
   );
 };
