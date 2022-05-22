@@ -6,9 +6,11 @@ import Total from "../Components/Total";
 const Course = ({ course }) => {
   return (
     <div>
-      <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
+      <li>
+        <Header course={course} />
+        <Content course={course} />
+        <Total course={course} />
+      </li>
     </div>
   );
 };
