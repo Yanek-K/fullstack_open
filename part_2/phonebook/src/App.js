@@ -4,6 +4,7 @@ import "./App.css";
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", id: "Arto Hellas" },
+    { name: "Pablo Conseulas", id: "Pablo Conseulas" },
   ]);
   const [newName, setNewName] = useState("");
 
@@ -13,9 +14,15 @@ const App = () => {
       name: newName,
       id: newName,
     };
-    Object.values({ persons }).includes({ newName })
-      ? alert(`${newName} is already in the phonebook`)
-      : setPersons(persons.concat(nameObject));
+    const person = persons.find(
+      (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
+    );
+
+    if (person) {
+      alert(`${newName}'s name is already in the list`);
+    } else {
+      setPersons(persons.concat(nameObject));
+    }
     setNewName("");
   };
 
