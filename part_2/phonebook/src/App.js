@@ -17,6 +17,7 @@ const App = () => {
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [filterBy, setFilterBy] = useState("");
 
   const addName = (event) => {
     event.preventDefault();
@@ -38,6 +39,12 @@ const App = () => {
     setNewNumber("");
   };
 
+  const filterName = () => {};
+
+  const handleFilterBy = (event) => {
+    setFilterBy(event.target.value);
+  };
+
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -49,7 +56,11 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <div>
+        Filter shown with: <input value={filterBy} onChange={handleFilterBy} />
+      </div>
       <form onSubmit={addName}>
+        <h2>Add a New Contact</h2>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
         </div>
