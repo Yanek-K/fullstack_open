@@ -1,5 +1,8 @@
 import { useState } from "react";
 import "./App.css";
+import FilterNames from "./FilterNames";
+import NewContact from "./NewContact";
+import RenderContacts from "./RenderContacts";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -7,6 +10,16 @@ const App = () => {
       name: "Arto Hellas",
       id: "Arto Hellas",
       number: "647 - 233 - 1542",
+    },
+    {
+      name: "Mik Jenkins",
+      id: "Mik Jenkins",
+      number: "747 - 412 - 5241",
+    },
+    {
+      name: "Ana Conseulas",
+      id: "Ana Conseulas",
+      number: "595 - 343 - 7427",
     },
     {
       name: "Pablo Conseulas",
@@ -39,10 +52,12 @@ const App = () => {
     setNewNumber("");
   };
 
-  const filterName = () => {};
-
   const handleFilterBy = (event) => {
     setFilterBy(event.target.value);
+    let filteredNames = persons.map((person) => person.name);
+    filteredNames.forEach((name) => {
+      name.toLowerCase().includes(filterBy.trim().toLowerCase());
+    });
   };
 
   const handleNameChange = (event) => {
@@ -59,26 +74,26 @@ const App = () => {
       <div>
         Filter shown with: <input value={filterBy} onChange={handleFilterBy} />
       </div>
-      <form onSubmit={addName}>
-        <h2>Add a New Contact</h2>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <ul>
-        {persons.map((person) => (
-          <li key={person.id}>
-            {person.name} {person.number}
-          </li>
-        ))}
-      </ul>
+      <NewContact
+        addName={addName}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+        newName={newName}
+        newNumber={newNumber}
+      />
+      {filterBy === "" ? (
+        <ul>
+          {persons.map((person) => (
+            <RenderContacts
+              key={person.id}
+              name={person.name}
+              number={person.number}
+            />
+          ))}
+        </ul>
+      ) : (
+        <FilterNames />
+      )}
     </div>
   );
 };
