@@ -1,6 +1,6 @@
 import React from "react";
 
-const FilterNames = () => {
+const ShowNames = () => {
   return (
     <div>
       <p>Hello</p>
@@ -8,4 +8,4 @@ const FilterNames = () => {
   );
 };
 
-export default FilterNames;
+export default ShowNames;

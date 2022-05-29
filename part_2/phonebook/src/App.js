@@ -1,10 +1,16 @@
 import { useState } from "react";
 import "./App.css";
-import FilterNames from "./FilterNames";
+
+// Components
+
 import NewContact from "./NewContact";
 import RenderContacts from "./RenderContacts";
+import ShowNames from "./ShowNames";
 
 const App = () => {
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [filterBy, setFilterBy] = useState("");
   const [persons, setPersons] = useState([
     {
       name: "Arto Hellas",
@@ -28,10 +34,6 @@ const App = () => {
     },
   ]);
 
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [filterBy, setFilterBy] = useState("");
-
   const addName = (event) => {
     event.preventDefault();
     const nameObject = {
@@ -39,25 +41,30 @@ const App = () => {
       id: newName,
       number: newNumber,
     };
-    const person = persons.find(
-      (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
-    );
 
-    if (person) {
-      alert(`${newName}'s name is already in the list`);
-    } else {
-      setPersons(persons.concat(nameObject));
-    }
+    alreadyExists(nameObject);
     setNewName("");
     setNewNumber("");
   };
 
+  const alreadyExists = (nameObject) => {
+    const person = persons.find(
+      (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
+    );
+    if (person) {
+      alert(`${newName}'s name is already in the list`);
+    } else {
+      setPersons(persons.concat(newName));
+    }
+  };
+
   const handleFilterBy = (event) => {
     setFilterBy(event.target.value);
+  };
+
+  const filterNames = () => {
     let filteredNames = persons.map((person) => person.name);
-    filteredNames.forEach((name) => {
-      name.toLowerCase().includes(filterBy.trim().toLowerCase());
-    });
+    return filteredNames.filter((name) => name.includes(filterBy));
   };
 
   const handleNameChange = (event) => {
@@ -92,7 +99,7 @@ const App = () => {
           ))}
         </ul>
       ) : (
-        <FilterNames />
+        <RenderContacts name={filterNames()} />
       )}
     </div>
   );
