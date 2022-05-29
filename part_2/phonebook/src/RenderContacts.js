@@ -1,6 +1,7 @@
 import React from "react";
 
-const RenderContacts = ({ name, number }) => {
+const RenderContacts = (props) => {
+  const { name, number } = props;
   return (
     <div>
       <li>

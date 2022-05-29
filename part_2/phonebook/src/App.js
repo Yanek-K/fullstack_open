@@ -2,15 +2,14 @@ import { useState } from "react";
 import "./App.css";
 
 // Components
-
 import NewContact from "./NewContact";
 import RenderContacts from "./RenderContacts";
-import ShowNames from "./ShowNames";
 
 const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterBy, setFilterBy] = useState("");
+  const [filteredNames, setFilteredNames] = useState("");
   const [persons, setPersons] = useState([
     {
       name: "Arto Hellas",
@@ -31,6 +30,11 @@ const App = () => {
       name: "Pablo Conseulas",
       id: "Pablo Conseulas",
       number: "647 - 223 - 1242",
+    },
+    {
+      name: "Arni Mell",
+      id: "Arti Mell",
+      number: "959 - 231 - 5135",
     },
   ]);
 
@@ -54,17 +58,16 @@ const App = () => {
     if (person) {
       alert(`${newName}'s name is already in the list`);
     } else {
-      setPersons(persons.concat(newName));
+      setPersons(persons.concat(nameObject));
     }
   };
 
   const handleFilterBy = (event) => {
     setFilterBy(event.target.value);
-  };
-
-  const filterNames = () => {
-    let filteredNames = persons.map((person) => person.name);
-    return filteredNames.filter((name) => name.includes(filterBy));
+    const filterNames = persons.map((person) => person);
+    setFilteredNames(
+      filterNames.filter((person) => person.name.includes(event.target.value))
+    );
   };
 
   const handleNameChange = (event) => {
@@ -96,10 +99,18 @@ const App = () => {
               name={person.name}
               number={person.number}
             />
-          ))}
+          ))}{" "}
         </ul>
       ) : (
-        <RenderContacts name={filterNames()} />
+        <ul>
+          {filteredNames.map((person) => (
+            <RenderContacts
+              key={person.id}
+              name={person.name}
+              number={person.number}
+            />
+          ))}
+        </ul>
       )}
     </div>
   );
