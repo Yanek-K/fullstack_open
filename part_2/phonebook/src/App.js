@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "./App.css";
 
 // Components
@@ -10,33 +11,13 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const [filteredNames, setFilteredNames] = useState("");
-  const [persons, setPersons] = useState([
-    {
-      name: "Arto Hellas",
-      id: "Arto Hellas",
-      number: "647 - 233 - 1542",
-    },
-    {
-      name: "Mik Jenkins",
-      id: "Mik Jenkins",
-      number: "747 - 412 - 5241",
-    },
-    {
-      name: "Ana Conseulas",
-      id: "Ana Conseulas",
-      number: "595 - 343 - 7427",
-    },
-    {
-      name: "Pablo Conseulas",
-      id: "Pablo Conseulas",
-      number: "647 - 223 - 1242",
-    },
-    {
-      name: "Arni Mell",
-      id: "Arti Mell",
-      number: "959 - 231 - 5135",
-    },
-  ]);
+  const [persons, setPersons] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons").then((response) => {
+      setPersons(response.data);
+    });
+  }, []);
 
   const addName = (event) => {
     event.preventDefault();
@@ -55,11 +36,9 @@ const App = () => {
     const person = persons.find(
       (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
     );
-    if (person) {
-      alert(`${newName}'s name is already in the list`);
-    } else {
-      setPersons(persons.concat(nameObject));
-    }
+    person
+      ? alert(`${newName}'s name is already in the list`)
+      : setPersons(persons.concat(nameObject));
   };
 
   const handleFilterBy = (event) => {
