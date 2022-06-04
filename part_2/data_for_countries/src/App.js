@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CountriesData from "./CountriesData";
+import Search from "./Search";
 
 const App = () => {
   const [data, setData] = useState([]);
   const [inputCountry, setInputCountry] = useState("");
-  const [filterCountries, setFilterCountries] = useState("");
 
   const handleInputCountry = (event) => {
     setInputCountry(event.target.value);
-    const allCountries = data.map((country) => country);
-    setFilterCountries(
-      allCountries.filter((country) =>
-        country.name.common.includes(event.target.value)
-      )
-    );
   };
 
   useEffect(() => {
@@ -23,15 +17,14 @@ const App = () => {
     });
   }, []);
 
+  const filteredCountries =
+    inputCountry === "" ? [] : Search(data, inputCountry);
+
   return (
     <div className="App">
-      Find Countries
+      Find Countries:
       <input value={inputCountry} onChange={handleInputCountry} />
-      {filterCountries.length >= 10 ? (
-        <p>Too many results, please narrow your search</p>
-      ) : (
-        <CountriesData filterCountries={filterCountries} />
-      )}
+      <CountriesData filteredCountries={filteredCountries} />
     </div>
   );
 };
