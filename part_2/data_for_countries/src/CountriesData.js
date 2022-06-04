@@ -1,5 +1,6 @@
 import React from "react";
 import CountryData from "./CountryData";
+import ShowButton from "./ShowButton";
 
 const CountriesData = ({ filteredCountries }) => {
   if (filteredCountries.length === 1) {
@@ -14,8 +15,9 @@ const CountriesData = ({ filteredCountries }) => {
   return filteredCountries.map((country) => {
     return (
       <div>
-        <li key={country.name.official} style={{ listStyleType: "none" }}>
+        <li key={country.name.common} style={{ listStyleType: "none" }}>
           {country.name.common}
+          <ShowButton country={country} />
         </li>
       </div>
     );

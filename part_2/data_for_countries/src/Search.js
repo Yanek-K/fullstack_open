@@ -1,6 +1,8 @@
 let Search = (data, inputCountry) => {
   let filteredCountries = data.filter(
-    (country) => country.name.common.includes(inputCountry) === true
+    (country) =>
+      country.name.common.toLowerCase().includes(inputCountry.toLowerCase()) ===
+      true
   );
   return filteredCountries;
 };
