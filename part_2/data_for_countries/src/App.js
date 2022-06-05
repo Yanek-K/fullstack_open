@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
+
+// Packages
 import axios from "axios";
+
+// Components
 import CountriesData from "./CountriesData";
 import Search from "./Search";
 

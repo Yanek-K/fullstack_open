@@ -1,4 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
+
+// Packages
+import axios from "axios";
+
+// Components
 import CountryData from "./CountryData";
 import ShowButton from "./ShowButton";
 

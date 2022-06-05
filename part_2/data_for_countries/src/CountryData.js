@@ -1,5 +1,8 @@
 import React from "react";
 
+// Components
+import WeatherData from "./CountryWeather";
+
 const CountryData = ({ country }) => {
   let languages = Object.values(country.languages);
 
@@ -15,6 +18,7 @@ const CountryData = ({ country }) => {
         ))}
       </ul>
       <img src={country.flags.png} alt="Flag" />
+      <WeatherData country={country} />
     </div>
   );
 };

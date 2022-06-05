@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import CountriesData from "./CountriesData";
+
+// Components
 import CountryData from "./CountryData";
 
 const ShowButton = ({ country }) => {
