@@ -5,6 +5,7 @@ import "./App.css";
 // Components
 import NewContact from "./NewContact";
 import RenderContacts from "./RenderContacts";
+import backend from "./services/backend";
 
 const App = () => {
   const [newName, setNewName] = useState("");
@@ -14,8 +15,8 @@ const App = () => {
   const [persons, setPersons] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    backend.getAll().then((initalPeople) => {
+      setPersons(initalPeople);
     });
   }, []);
 
@@ -27,19 +28,31 @@ const App = () => {
       number: newNumber,
     };
 
-    alreadyExists(nameObject);
+    if (alreadyExists(nameObject)) {
+      alert(`${newName}'s name is already in the list`);
+    } else {
+      backend
+        .createContact(nameObject)
+        .then((newPerson) => setPersons(persons.concat(newPerson)));
+    }
     setNewName("");
     setNewNumber("");
   };
 
   const alreadyExists = (nameObject) => {
-    const person = persons.find(
+    persons.find(
       (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
     );
-    person
-      ? alert(`${newName}'s name is already in the list`)
-      : setPersons(persons.concat(nameObject));
   };
+
+  // const alreadyExists = (nameObject) => {
+  //   const person = persons.find(
+  //     (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
+  //   );
+  //   person
+  //     ? alert(`${newName}'s name is already in the list`)
+  //     : setPersons(persons.concat(nameObject));
+  // };
 
   const handleFilterBy = (event) => {
     setFilterBy(event.target.value);
