@@ -27,9 +27,16 @@ const App = () => {
       id: newName,
       number: newNumber,
     };
+    const msg = `${newName}'s name is already in the list, replace
+    the old number with a new one?`;
+    const duplicatePerson = persons.find(
+      (p) => p.name.toLowerCase() === nameObject.name.toLowerCase()
+    );
 
-    if (alreadyExists(nameObject)) {
-      alert(`${newName}'s name is already in the list`);
+    if (duplicatePerson) {
+      if (window.confirm(msg) === true) {
+        updateContact(nameObject);
+      }
     } else {
       backend
         .createContact(nameObject)
@@ -39,10 +46,28 @@ const App = () => {
     setNewNumber("");
   };
 
-  const alreadyExists = (nameObject) => {
-    persons.find(
-      (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
-    );
+  const deleteContact = (person) => {
+    window.confirm(`Delete ${person.name}?`);
+    const newPersons = persons.filter((p) => p.id !== person.id);
+    backend
+      .deleteContact(person)
+      .then(() => alert(`${person.name} has been deleted`));
+    setPersons(newPersons);
+  };
+
+  const updateContact = (nameObject) => {
+    const person = persons.find((person) => person.name === nameObject.name);
+    console.log(person);
+    const updatedContact = { ...person, number: nameObject.number };
+    axios
+      .put(`http://localhost:3001/persons/${person.id}`, updatedContact)
+      .then((response) => {
+        setPersons(
+          persons.map((person) =>
+            person.id !== nameObject.id ? person : updatedContact
+          )
+        );
+      });
   };
 
   const handleFilterBy = (event) => {
@@ -53,22 +78,8 @@ const App = () => {
     );
   };
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  };
-
-  const deleteContact = (person) => {
-    window.confirm(`Delete ${person.name}?`);
-    const url = `http://localhost:3001/persons/${person.id}`;
-
-    const newPersons = persons.filter((p) => p.id !== person.id);
-    axios.delete(url).then(() => alert(`${person.name} has been deleted`));
-    setPersons(newPersons);
-  };
+  const handleNameChange = (e) => setNewName(e.target.value);
+  const handleNumberChange = (e) => setNewNumber(e.target.value);
 
   return (
     <div>

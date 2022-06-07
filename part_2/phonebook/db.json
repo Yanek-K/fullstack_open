@@ -6,9 +6,24 @@
       "number": "923 123 421"
     },
     {
-      "name": "Michael Kluthe",
-      "id": "Michael Kluthe",
-      "number": "931 132 301"
+      "name": "Arto Hellas",
+      "id": "Arto Hellas ",
+      "number": "12345"
+    },
+    {
+      "name": "Arto Hellas",
+      "id": "Arto Hellas",
+      "number": "123456"
+    },
+    {
+      "name": "Re",
+      "id": "Re",
+      "number": "4"
+    },
+    {
+      "name": "Re ",
+      "id": "Re ",
+      "number": "3"
     }
   ]
 }
