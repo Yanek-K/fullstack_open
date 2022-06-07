@@ -45,15 +45,6 @@ const App = () => {
     );
   };
 
-  // const alreadyExists = (nameObject) => {
-  //   const person = persons.find(
-  //     (person) => person.name.toLowerCase() === nameObject.name.toLowerCase()
-  //   );
-  //   person
-  //     ? alert(`${newName}'s name is already in the list`)
-  //     : setPersons(persons.concat(nameObject));
-  // };
-
   const handleFilterBy = (event) => {
     setFilterBy(event.target.value);
     const filterNames = persons.map((person) => person);
@@ -68,6 +59,15 @@ const App = () => {
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
+  };
+
+  const deleteContact = (person) => {
+    window.confirm(`Delete ${person.name}?`);
+    const url = `http://localhost:3001/persons/${person.id}`;
+
+    const newPersons = persons.filter((p) => p.id !== person.id);
+    axios.delete(url).then(() => alert(`${person.name} has been deleted`));
+    setPersons(newPersons);
   };
 
   return (
@@ -90,6 +90,7 @@ const App = () => {
               key={person.id}
               name={person.name}
               number={person.number}
+              deleteContact={() => deleteContact(person)}
             />
           ))}{" "}
         </ul>
@@ -100,6 +101,7 @@ const App = () => {
               key={person.id}
               name={person.name}
               number={person.number}
+              deleteContact={() => deleteContact(person.id)}
             />
           ))}
         </ul>

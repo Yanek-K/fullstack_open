@@ -1,74 +1,14 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
-    },
-    {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "Mik Jenkins",
-      "number": "74-21-4125241",
-      "id": 5
-    },
-    {
-      "name": "Ana Conseulas",
-      "number": "39-24-5352323",
-      "id": 6
-    },
-    {
-      "name": "Pablo Conseulas",
-      "number": "12-43-736345",
-      "id": 7
-    },
-    {
-      "name": "Arni Mell",
-      "number": "39-23-6425261",
-      "id": 8
-    },
-    {
       "name": "Peter Pan",
       "id": "Peter Pan",
-      "number": "23-32-4163591"
+      "number": "923 123 421"
     },
     {
-      "name": "Frida Kahlo",
-      "id": "Frida Kahlo",
-      "number": "49-23-8639102"
-    },
-    {
-      "name": "Frang Elico",
-      "id": "Frang Elico",
-      "number": "21-41-6823912"
-    },
-    {
-      "name": "Mike Mikeyson",
-      "id": "Mike Mikeyson",
-      "number": "92-34-4124149"
-    },
-    {
-      "name": "Kaven Dish",
-      "id": "Kaven Dish",
-      "number": "05-59-1959396"
-    },
-    {
-      "name": "Arto Hellas",
-      "id": "Arto Hellas",
-      "number": ""
+      "name": "Michael Kluthe",
+      "id": "Michael Kluthe",
+      "number": "931 132 301"
     }
   ]
 }

@@ -1,11 +1,11 @@
 import React from "react";
 
-const RenderContacts = (props) => {
-  const { name, number } = props;
+const RenderContacts = ({ name, number, deleteContact }) => {
   return (
     <div>
       <li>
         {name} {number}
+        <button onClick={deleteContact}>Delete Contact</button>
       </li>
     </div>
   );

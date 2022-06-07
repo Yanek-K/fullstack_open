@@ -11,4 +11,6 @@ const createContact = (newObject) => {
   return request.then((response) => response.data);
 };
 
+const deleteContact = () => {};
+
 export default { getAll, createContact };
