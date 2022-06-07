@@ -57,17 +57,16 @@ const App = () => {
 
   const updateContact = (nameObject) => {
     const person = persons.find((person) => person.name === nameObject.name);
-    console.log(person);
     const updatedContact = { ...person, number: nameObject.number };
-    axios
-      .put(`http://localhost:3001/persons/${person.id}`, updatedContact)
-      .then((response) => {
+    backend
+      .updateContact(nameObject, updatedContact)
+      .then(() =>
         setPersons(
           persons.map((person) =>
             person.id !== nameObject.id ? person : updatedContact
           )
-        );
-      });
+        )
+      );
   };
 
   const handleFilterBy = (event) => {
