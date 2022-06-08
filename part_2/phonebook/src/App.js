@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./App.css";
+import "./index.css";
 
 // Components
-import NewContact from "./NewContact";
-import RenderContacts from "./RenderContacts";
+import NewContact from "./components/NewContact";
+import RenderContacts from "./components/RenderContacts";
 import backend from "./services/backend";
-import Notification from "./Notification";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [newName, setNewName] = useState("");
