@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import "./index.css";
 
 // Components
 import NewContact from "./components/NewContact";
-import RenderContacts from "./components/RenderContacts";
-import backend from "./services/backend";
 import Notification from "./components/Notification";
+import RenderContacts from "./components/RenderContacts";
+
+// Backend
+import backend from "./services/backend";
 
 const App = () => {
   const [newName, setNewName] = useState("");
@@ -61,6 +62,13 @@ const App = () => {
           setTimeout(() => {
             setNotificationMessage(null);
           }, 5000);
+        })
+
+        .catch((error) => {
+          setNotificationMessage({
+            text: `There was an error, please try again, maybe this can help ${error}`,
+            type: "error",
+          });
         });
     }
     setNewName("");
@@ -69,7 +77,6 @@ const App = () => {
 
   const deleteContact = (person) => {
     window.confirm(`Delete ${person.name}?`);
-
     backend
       .deleteContact(person)
       .then(() =>
@@ -115,17 +122,13 @@ const App = () => {
 
   const handleNameChange = (e) => setNewName(e.target.value);
   const handleNumberChange = (e) => setNewNumber(e.target.value);
-
   const personsToShow = filterBy.length === 0 ? persons : filteredNames;
 
   return (
     <div>
       <h1>Phonebook</h1>
       {notificationMessage !== null ? (
-        <Notification
-          text={notificationMessage.text}
-          type={notificationMessage.type}
-        />
+        <Notification notificationMessage={notificationMessage} />
       ) : null}
       <div>
         Filter shown with: <input value={filterBy} onChange={handleFilterBy} />

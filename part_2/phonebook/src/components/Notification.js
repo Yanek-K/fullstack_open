@@ -1,7 +1,9 @@
 import React from "react";
 import "./../index.css";
 
-const Notification = ({ text, type }) => {
+const Notification = ({ notificationMessage }) => {
+  const { text, type } = notificationMessage;
+
   if (text === null) {
     return null;
   }
