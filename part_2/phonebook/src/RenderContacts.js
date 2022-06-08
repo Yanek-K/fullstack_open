@@ -1,12 +1,18 @@
 import React from "react";
+import RenderContact from "./RenderContact";
 
-const RenderContacts = ({ name, number, deleteContact }) => {
+const RenderContacts = ({ persons, deleteContact }) => {
   return (
     <div>
-      <li>
-        {name} {number}
-        <button onClick={deleteContact}>Delete Contact</button>
-      </li>
+      <ul>
+        {persons.map((person) => (
+          <RenderContact
+            key={person.id}
+            person={person}
+            deleteContact={() => deleteContact(person)}
+          />
+        ))}
+      </ul>
     </div>
   );
 };

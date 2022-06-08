@@ -69,7 +69,7 @@ const App = () => {
 
   const deleteContact = (person) => {
     window.confirm(`Delete ${person.name}?`);
-    const newPersons = persons.filter((p) => p.id !== person.id);
+
     backend
       .deleteContact(person)
       .then(() =>
@@ -78,6 +78,7 @@ const App = () => {
           type: "notification",
         })
       )
+
       .catch((error) => {
         setNotificationMessage({
           text: `${person.name} was already deleted from the database`,
@@ -87,7 +88,8 @@ const App = () => {
           setNotificationMessage(null);
         }, 5000);
       });
-    setPersons(newPersons);
+
+    setPersons(persons.filter((p) => p.id !== person.id));
   };
 
   const updateContact = (nameObject) => {
@@ -106,14 +108,15 @@ const App = () => {
 
   const handleFilterBy = (event) => {
     setFilterBy(event.target.value);
-    const filterNames = persons.map((person) => person);
     setFilteredNames(
-      filterNames.filter((person) => person.name.includes(event.target.value))
+      persons.filter((person) => person.name.includes(event.target.value))
     );
   };
 
   const handleNameChange = (e) => setNewName(e.target.value);
   const handleNumberChange = (e) => setNewNumber(e.target.value);
+
+  const personsToShow = filterBy.length === 0 ? persons : filteredNames;
 
   return (
     <div>
@@ -134,29 +137,10 @@ const App = () => {
         newName={newName}
         newNumber={newNumber}
       />
-      {filterBy === "" ? (
-        <ul>
-          {persons.map((person) => (
-            <RenderContacts
-              key={person.id}
-              name={person.name}
-              number={person.number}
-              deleteContact={() => deleteContact(person)}
-            />
-          ))}{" "}
-        </ul>
-      ) : (
-        <ul>
-          {filteredNames.map((person) => (
-            <RenderContacts
-              key={person.id}
-              name={person.name}
-              number={person.number}
-              deleteContact={() => deleteContact(person.id)}
-            />
-          ))}
-        </ul>
-      )}
+      <RenderContacts
+        persons={personsToShow}
+        deleteContact={(person) => deleteContact(person)}
+      />
     </div>
   );
 };
