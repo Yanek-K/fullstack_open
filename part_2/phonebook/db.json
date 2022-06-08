@@ -1,29 +1,3 @@
 {
-  "persons": [
-    {
-      "name": "Peter Pan",
-      "id": "Peter Pan",
-      "number": "923 123 421"
-    },
-    {
-      "name": "Arto Hellas",
-      "id": "Arto Hellas ",
-      "number": "12345"
-    },
-    {
-      "name": "Arto Hellas",
-      "id": "Arto Hellas",
-      "number": "123456"
-    },
-    {
-      "name": "Re",
-      "id": "Re",
-      "number": "5"
-    },
-    {
-      "name": "Re ",
-      "id": "Re ",
-      "number": "3"
-    }
-  ]
+  "persons": []
 }

@@ -6,6 +6,7 @@ import "./App.css";
 import NewContact from "./NewContact";
 import RenderContacts from "./RenderContacts";
 import backend from "./services/backend";
+import Notification from "./Notification";
 
 const App = () => {
   const [newName, setNewName] = useState("");
@@ -13,6 +14,7 @@ const App = () => {
   const [filterBy, setFilterBy] = useState("");
   const [filteredNames, setFilteredNames] = useState("");
   const [persons, setPersons] = useState([]);
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   useEffect(() => {
     backend.getAll().then((initalPeople) => {
@@ -22,13 +24,16 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault();
+
     const nameObject = {
       name: newName,
       id: newName,
       number: newNumber,
     };
+
     const msg = `${newName}'s name is already in the list, replace
     the old number with a new one?`;
+
     const duplicatePerson = persons.find(
       (p) => p.name.toLowerCase() === nameObject.name.toLowerCase()
     );
@@ -36,11 +41,27 @@ const App = () => {
     if (duplicatePerson) {
       if (window.confirm(msg) === true) {
         updateContact(nameObject);
+        setNotificationMessage({
+          text: `${nameObject.name} was successfully updated`,
+          type: "notification",
+        });
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
       }
     } else {
       backend
         .createContact(nameObject)
-        .then((newPerson) => setPersons(persons.concat(newPerson)));
+        .then((newPerson) => setPersons(persons.concat(newPerson)))
+        .then(() => {
+          setNotificationMessage({
+            text: `${nameObject.name} was successfully added`,
+            type: "notification",
+          });
+          setTimeout(() => {
+            setNotificationMessage(null);
+          }, 5000);
+        });
     }
     setNewName("");
     setNewNumber("");
@@ -51,7 +72,21 @@ const App = () => {
     const newPersons = persons.filter((p) => p.id !== person.id);
     backend
       .deleteContact(person)
-      .then(() => alert(`${person.name} has been deleted`));
+      .then(() =>
+        setNotificationMessage({
+          text: `${person.name} was successfully deleted`,
+          type: "notification",
+        })
+      )
+      .catch((error) => {
+        setNotificationMessage({
+          text: `${person.name} was already deleted from the database`,
+          type: "error",
+        });
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
+      });
     setPersons(newPersons);
   };
 
@@ -83,6 +118,12 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      {notificationMessage !== null ? (
+        <Notification
+          text={notificationMessage.text}
+          type={notificationMessage.type}
+        />
+      ) : null}
       <div>
         Filter shown with: <input value={filterBy} onChange={handleFilterBy} />
       </div>
