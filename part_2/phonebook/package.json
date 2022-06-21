@@ -20,7 +20,7 @@
     "eject": "react-scripts eject",
     "server": "json-server -p3001 --watch db.json",
     "build:ui": "rm -rf build && npm run build && cp -r build ../../../fullstack_open_part3",
-    "deploy": "cd ../../../fullstack_open_part3 && git push heroku main",
+    "deploy": "cd ../../../fullstack_open_part3 && git add . && git commit -m uibuild && git push -u origin main && git push heroku main ",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail"
   },
