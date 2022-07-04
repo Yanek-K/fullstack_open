@@ -21,4 +21,5 @@ const updateContact = (person, updatedContact) => {
   return request.then((response) => response.data);
 };
 
-export default { getAll, createContact, deleteContact, updateContact };
+const backend = { getAll, createContact, deleteContact, updateContact };
+export default backend;
