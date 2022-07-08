@@ -1,36 +1,27 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+// Components
 import AddNewContact from "./components/AddNewContact";
 import FindContact from "./components/FindContact";
 import RenderContacts from "./components/RenderContacts";
+
+// Services
+import personService from "./services/persons";
 
 const App = () => {
   const [filteredNames, setFilteredNames] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchName, setSearchName] = useState("");
-  const [persons, setPersons] = useState([
-    {
-      name: "Peanut",
-      number: "1234",
-      id: 1,
-    },
-    {
-      name: "Butter",
-      number: "1234",
-      id: 2,
-    },
+  const [persons, setPersons] = useState([]);
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
-    {
-      name: "Cup",
-      number: "1234",
-      id: 3,
-    },
-    {
-      name: "Cake",
-      number: "1234",
-      id: 4,
-    },
-  ]);
+  useEffect(() => {
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+    });
+  }, []);
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -45,12 +36,41 @@ const App = () => {
     const duplicatePerson = persons.find((person) => person.name === newName);
 
     if (duplicatePerson) {
-      alert(duplicateMsg);
+      if (window.confirm(duplicateMsg) === true) {
+        updateContact(personObject);
+      }
     } else {
-      setPersons(persons.concat(personObject));
-      setNewName("");
-      setNewNumber("");
+      personService.create(personObject).then((newPerson) => {
+        setPersons(persons.concat(newPerson));
+        setNewName("");
+        setNewNumber("");
+      });
     }
+  };
+
+  const deleteContact = (person) => {
+    window.confirm(`Delete ${person.name}?`);
+    personService
+      .deletePerson(person)
+      .then(() => {
+        console.log(`${person.name} was deleted`);
+      })
+      .catch((error) => {
+        console.log(error, `${person.name} not deleted`);
+      });
+    setPersons(persons.filter((p) => p.id !== person.id));
+  };
+
+  const updateContact = (nameObject) => {
+    const person = persons.find((person) => person.name === nameObject.name);
+    const updatedContact = { ...person, number: nameObject.number };
+    personService.update(nameObject, updatedContact).then(() => {
+      setPersons(
+        persons.map((person) =>
+          person.id !== nameObject.id ? person : updatedContact
+        )
+      );
+    });
   };
 
   const handleNewName = (e) => setNewName(e.target.value);
@@ -81,7 +101,10 @@ const App = () => {
       />
 
       <h3>Contact List</h3>
-      <RenderContacts persons={personsToShow} />
+      <RenderContacts
+        persons={personsToShow}
+        deleteContact={(person) => deleteContact(person)}
+      />
     </div>
   );
 };
