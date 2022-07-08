@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 // Components
 import AddNewContact from "./components/AddNewContact";
 import FindContact from "./components/FindContact";
+import Notification from "./components/Notification";
 import RenderContacts from "./components/RenderContacts";
 
 // Services
@@ -23,29 +24,59 @@ const App = () => {
     });
   }, []);
 
+  const generateId = () => {
+    return Math.floor(Math.random() * 10000);
+  };
+
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
+      id: generateId(),
     };
 
-    const duplicateMsg = `${newName} is already in the phonebook`;
+    const duplicateMsg = `${newName} is already in the phonebook, replace the old number with a new one?`;
 
     const duplicatePerson = persons.find((person) => person.name === newName);
 
     if (duplicatePerson) {
       if (window.confirm(duplicateMsg) === true) {
         updateContact(personObject);
+        setNotificationMessage({
+          text: `${personObject.name} was successfully updated in the phonebook`,
+          type: "notification",
+        });
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
       }
     } else {
       personService.create(personObject).then((newPerson) => {
         setPersons(persons.concat(newPerson));
-        setNewName("");
-        setNewNumber("");
+        setNotificationMessage({
+          text: `${personObject.name} was successfully added to the phonebook`,
+          type: "notification",
+        });
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
       });
+      setNewName("");
+      setNewNumber("");
     }
+  };
+
+  const updateContact = (nameObject) => {
+    const person = persons.find((person) => person.name === nameObject.name);
+    const updatedContact = { ...person, number: nameObject.number };
+    personService.update(person, updatedContact).then(() => {
+      setPersons(
+        persons.map((person) =>
+          person.name !== nameObject.name ? person : updatedContact
+        )
+      );
+    });
   };
 
   const deleteContact = (person) => {
@@ -59,18 +90,6 @@ const App = () => {
         console.log(error, `${person.name} not deleted`);
       });
     setPersons(persons.filter((p) => p.id !== person.id));
-  };
-
-  const updateContact = (nameObject) => {
-    const person = persons.find((person) => person.name === nameObject.name);
-    const updatedContact = { ...person, number: nameObject.number };
-    personService.update(nameObject, updatedContact).then(() => {
-      setPersons(
-        persons.map((person) =>
-          person.id !== nameObject.id ? person : updatedContact
-        )
-      );
-    });
   };
 
   const handleNewName = (e) => setNewName(e.target.value);
@@ -88,6 +107,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      {notificationMessage !== null ? (
+        <Notification message={notificationMessage} />
+      ) : null}
+
       <FindContact
         searchName={searchName}
         handleSearchName={handleSearchName}
