@@ -1,31 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arni Mell",
-      "number": "39-23-6425261",
-      "id": 8
-    },
-    {
-      "name": "MIke and Ike",
-      "number": "1",
-      "id": 10
-    },
-    {
-      "name": "Peter",
-      "number": "4124",
-      "id": 3
-    },
-    {
-      "name": "peter",
-      "number": "14123",
-      "id": 4
-    },
-    {
-      "name": "Paul",
-      "number": "903515",
-      "id": 5
-    },
-    {
       "name": "Pauli",
       "number": "38413",
       "id": 6
@@ -41,9 +16,9 @@
       "id": 815
     },
     {
-      "name": "ANa",
-      "number": "4124",
-      "id": 2427
+      "name": "Peter2",
+      "number": "124",
+      "id": 1203
     }
   ]
 }

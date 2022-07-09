@@ -47,9 +47,6 @@ const App = () => {
           text: `${personObject.name} was successfully updated in the phonebook`,
           type: "notification",
         });
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
       }
     } else {
       personService.create(personObject).then((newPerson) => {
@@ -58,10 +55,10 @@ const App = () => {
           text: `${personObject.name} was successfully added to the phonebook`,
           type: "notification",
         });
-        setTimeout(() => {
-          setNotificationMessage(null);
-        }, 5000);
       });
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
       setNewName("");
       setNewNumber("");
     }
@@ -70,25 +67,53 @@ const App = () => {
   const updateContact = (nameObject) => {
     const person = persons.find((person) => person.name === nameObject.name);
     const updatedContact = { ...person, number: nameObject.number };
-    personService.update(person, updatedContact).then(() => {
-      setPersons(
-        persons.map((person) =>
-          person.name !== nameObject.name ? person : updatedContact
-        )
-      );
-    });
+
+    personService
+      .update(person, updatedContact)
+      .then(() =>
+        setNotificationMessage({
+          text: `${nameObject.name} was successfully updated in the phonebook`,
+          type: "notification",
+        })
+      )
+      .then(() => {
+        setPersons(
+          persons.map((person) =>
+            person.name !== nameObject.name ? person : updatedContact
+          )
+        );
+      })
+      .catch((error) => {
+        setNotificationMessage({
+          text: `Unknown error occured while updating ${nameObject.name}, try again`,
+          type: "error",
+        });
+      });
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
   };
 
   const deleteContact = (person) => {
     window.confirm(`Delete ${person.name}?`);
     personService
       .deletePerson(person)
-      .then(() => {
-        console.log(`${person.name} was deleted`);
-      })
+      .then(() =>
+        setNotificationMessage({
+          text: `${person.name} was successfully deleted from the phonebook`,
+          type: "notification",
+        })
+      )
       .catch((error) => {
-        console.log(error, `${person.name} not deleted`);
+        setNotificationMessage({
+          text: `${person.name} was already deleted from the database`,
+          type: "error",
+        });
       });
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
+
     setPersons(persons.filter((p) => p.id !== person.id));
   };
 
@@ -107,7 +132,6 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
       {notificationMessage !== null ? (
         <Notification message={notificationMessage} />
       ) : null}
@@ -123,7 +147,6 @@ const App = () => {
         handleNewName={handleNewName}
         handleNewNumber={handleNewNumber}
       />
-
       <h3>Contact List</h3>
       <RenderContacts
         persons={personsToShow}
