@@ -10,6 +10,7 @@ import RenderContacts from "./components/RenderContacts";
 import personService from "./services/persons";
 
 const App = () => {
+  const name = "name";
   const [filteredNames, setFilteredNames] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
