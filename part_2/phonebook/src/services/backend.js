@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = "https://phonebook-fullstack-open12.herokuapp.com/api/persons";
+const baseUrl = "https://localhost:3001/api/persons";
 
 const getAll = () => {
   const request = axios.get(baseUrl);

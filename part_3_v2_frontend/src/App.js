@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 // Components
@@ -49,13 +48,15 @@ const App = () => {
         });
       }
     } else {
-      personService.create(personObject).then((newPerson) => {
-        setPersons(persons.concat(newPerson));
-        setNotificationMessage({
-          text: `${personObject.name} was successfully added to the phonebook`,
-          type: "notification",
-        });
-      });
+      personService
+        .create(personObject)
+        .then((newPerson) => setPersons(persons.concat(newPerson)))
+        .then(() =>
+          setNotificationMessage({
+            text: `${personObject.name} was successfully added to the phonebook`,
+            type: "notification",
+          })
+        );
       setTimeout(() => {
         setNotificationMessage(null);
       }, 5000);
@@ -67,7 +68,6 @@ const App = () => {
   const updateContact = (nameObject) => {
     const person = persons.find((person) => person.name === nameObject.name);
     const updatedContact = { ...person, number: nameObject.number };
-
     personService
       .update(person, updatedContact)
       .then(() =>
@@ -79,7 +79,7 @@ const App = () => {
       .then(() => {
         setPersons(
           persons.map((person) =>
-            person.name !== nameObject.name ? person : updatedContact
+            person.name !== nameObject.name ? person : nameObject.name
           )
         );
       })

@@ -8,6 +8,7 @@ import RenderContacts from "./components/RenderContacts";
 
 // Backend
 import backend from "./services/backend";
+import { set } from "mongoose";
 
 const App = () => {
   const [newName, setNewName] = useState("");
@@ -18,9 +19,11 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState(null);
 
   useEffect(() => {
-    backend.getAll().then((initalPeople) => {
-      setPersons(initalPeople);
-    });
+    setPersons([])
+      .then(() => backend.getAll())
+      .then((initalPeople) => {
+        setPersons(initalPeople);
+      });
   }, []);
 
   const addName = (event) => {
