@@ -10,7 +10,6 @@ import RenderContacts from "./components/RenderContacts";
 import personService from "./services/persons";
 
 const App = () => {
-  const name = "name";
   const [filteredNames, setFilteredNames] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -24,21 +23,22 @@ const App = () => {
     });
   }, []);
 
-  const generateId = () => {
-    return Math.floor(Math.random() * 10000);
-  };
-
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {
       name: newName,
       number: newNumber,
-      id: generateId(),
     };
 
     const duplicateMsg = `${newName} is already in the phonebook, replace the old number with a new one?`;
-
     const duplicatePerson = persons.find((person) => person.name === newName);
+
+    if (!personObject.name || !personObject.number) {
+      setNotificationMessage({
+        text: `Missing required fields`,
+        type: "error",
+      });
+    }
 
     if (duplicatePerson) {
       if (window.confirm(duplicateMsg) === true) {
@@ -57,13 +57,19 @@ const App = () => {
             text: `${personObject.name} was successfully added to the phonebook`,
             type: "notification",
           })
-        );
-      setTimeout(() => {
-        setNotificationMessage(null);
-      }, 5000);
-      setNewName("");
-      setNewNumber("");
+        )
+        .catch((error) => {
+          setNotificationMessage({
+            text: `${error.response.data.error}`,
+            type: "error",
+          });
+        });
     }
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
+    setNewName("");
+    setNewNumber("");
   };
 
   const updateContact = (nameObject) => {
@@ -71,22 +77,22 @@ const App = () => {
     const updatedContact = { ...person, number: nameObject.number };
     personService
       .update(person, updatedContact)
+      .then((returnedPerson) => {
+        setPersons(
+          persons.map((person) =>
+            person.name !== nameObject.name ? person : returnedPerson
+          )
+        );
+      })
       .then(() =>
         setNotificationMessage({
           text: `${nameObject.name} was successfully updated in the phonebook`,
           type: "notification",
         })
       )
-      .then(() => {
-        setPersons(
-          persons.map((person) =>
-            person.name !== nameObject.name ? person : nameObject.name
-          )
-        );
-      })
       .catch((error) => {
         setNotificationMessage({
-          text: `Unknown error occured while updating ${nameObject.name}, try again`,
+          text: `${error.response.data.error}`,
           type: "error",
         });
       });
