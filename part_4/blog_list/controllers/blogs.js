@@ -2,7 +2,7 @@ const blogRouter = require('express').Router();
 const Blog = require('../models/blog');
 
 blogRouter.get('/home', (request, response) => {
-  response.send('<h2>You have made it this far<h2>');
+  response.send('<h2>You have made it this far!<h2>');
 });
 
 blogRouter.get('/', (request, response) => {
