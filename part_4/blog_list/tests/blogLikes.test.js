@@ -22,7 +22,7 @@ describe('total likes', () => {
 
   test('when list has more blogs, it adds the likes of all of them', () => {
     const result = listHelper.totalLikes(listWithMoreBlogs);
-    expect(result).toBe(56);
+    expect(result).toBe(78);
   });
 
   test('when list is empty, it equals zero', () => {
