@@ -132,18 +132,23 @@ const blogsV2 = [
   },
 ];
 
-const dummy = (post) => {
-  return 1;
-};
-
-const totalLikes = (blogs) => {
+const mostLikes = (blogs) => {
   if (blogs.length === 0) {
-    return 0;
+    return {};
   } else {
-    const likes = blogs.map((blog) => blog.likes);
-    return likes.reduce((a, b) => a + b);
+    const data = blogs.reduce((op, { author, likes }) => {
+      op[author] = op[author] || 0;
+      op[author] += likes;
+      return op;
+    }, {});
+    console.log(data);
+    for (const name in data) {
+      console.log(Math.max(data[name]));
+    }
   }
 };
+
+console.log(mostLikes(blogs));
 
 const mostBlogs = (blogs) => {
   if (blogs.length === 0) {
@@ -169,17 +174,3 @@ const mostBlogs = (blogs) => {
 const mostBlogsHelper = (count, maxCount) => {
   return Object.keys(count).find((key) => count[key] === maxCount);
 };
-
-const mostLikes = (blogs) => {
-  if (blogs.length === 0) {
-    return {};
-  } else {
-    const data = blogs.reduce((op, { author, likes }) => {
-      op[author] = op[author] || 0;
-      op[author] += likes;
-      return op;
-    }, {});
-  }
-};
-
-module.exports = { blogs, blogsV2, dummy, totalLikes, mostBlogs, mostLikes };
