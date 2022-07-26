@@ -54,6 +54,28 @@ test('it uses a parameter named "id" for the unique identifier', async () => {
   expect(identifier).toBeDefined();
 });
 
+test('it allows a valid note to be added', async () => {
+  const newPost = {
+    title: 'Blog 4',
+    author: 'Him',
+    url: 'https://www.blogforhim.com',
+    likes: 32,
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newPost)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const response = await api.get('/api/blogs');
+
+  const contents = response.body.map((res) => res.title);
+
+  expect(response.body).toHaveLength(initialPosts.length + 1);
+  expect(contents).toContain('Blog 4');
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
