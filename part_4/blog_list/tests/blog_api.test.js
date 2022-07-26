@@ -76,6 +76,34 @@ test('it allows a valid note to be added', async () => {
   expect(contents).toContain('Blog 4');
 });
 
+test('blog post without title is not added', async () => {
+  const newPost = {
+    url: 'http://www.georgiau/blogs/untitled2',
+    author: 'Us',
+    likes: '',
+  };
+
+  await api.post('/api/blogs').send(newPost).expect(400);
+
+  const response = await api.get('/api/blogs');
+
+  expect(response.body).toHaveLength(initialPosts.length);
+});
+
+test('blog post without url is not added', async () => {
+  const newPost = {
+    title: 'Blog for them',
+    author: 'Us',
+    likes: '',
+  };
+
+  await api.post('/api/blogs').send(newPost).expect(400);
+
+  const response = await api.get('/api/blogs');
+
+  expect(response.body).toHaveLength(initialPosts.length);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
