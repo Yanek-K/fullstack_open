@@ -3,7 +3,7 @@ const listHelper = require('../utils/list_helper');
 describe('most blogs', () => {
   const blogs = listHelper.blogs;
   const blogsV2 = listHelper.blogsV2;
-  test('it return an empty object for no blogs', () => {
+  test('it return an empty string for no blogs', () => {
     const result = listHelper.mostBlogs([]);
 
     expect(result).toBe('');
