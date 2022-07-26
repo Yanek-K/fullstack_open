@@ -27,24 +27,31 @@ beforeEach(async () => {
   await blogObject.save();
 });
 
-test('blog posts are returned as json', async () => {
+test('it returns blog posts as json', async () => {
   await api
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/);
 });
 
-test('all notes are returned', async () => {
+test('it returns all notes from the database', async () => {
   const response = await api.get('/api/blogs');
 
   expect(response.body).toHaveLength(initialPosts.length);
 });
 
-test('a specific note is within the returned notes', async () => {
+test('it returns a specific note from the database', async () => {
   const response = await api.get('/api/blogs');
 
   const titles = response.body.map((res) => res.title);
   expect(titles).toContain('Blog 2');
+});
+
+test('it uses a parameter named "id" for the unique identifier', async () => {
+  const response = await api.get('/api/blogs');
+
+  const identifier = response.body.map((res) => res.id);
+  expect(identifier).toBeDefined();
 });
 
 afterAll(() => {
