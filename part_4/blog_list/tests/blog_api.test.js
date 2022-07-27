@@ -1,29 +1,15 @@
-const mongoose = require('mongoose');
 const supertest = require('supertest');
+const mongoose = require('mongoose');
+const helper = require('./test_helper');
 const app = require('../app');
 const api = supertest(app);
 const Blog = require('../models/blog');
 
-const initialPosts = [
-  {
-    title: 'Blog 1',
-    author: 'Me',
-    url: 'https://www.blogforme-atme.com',
-    likes: 4,
-  },
-  {
-    title: 'Blog 2',
-    author: 'You',
-    url: 'https://www.blogforyou.com',
-    likes: 200,
-  },
-];
-
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialPosts[0]);
+  let blogObject = new Blog(helper.initialPosts[0]);
   await blogObject.save();
-  blogObject = new Blog(initialPosts[1]);
+  blogObject = new Blog(helper.initialPosts[1]);
   await blogObject.save();
 });
 
@@ -37,7 +23,7 @@ test('it returns blog posts as json', async () => {
 test('it returns all notes from the database', async () => {
   const response = await api.get('/api/blogs');
 
-  expect(response.body).toHaveLength(initialPosts.length);
+  expect(response.body).toHaveLength(helper.initialPosts.length);
 });
 
 test('it returns a specific note from the database', async () => {
@@ -68,11 +54,10 @@ test('it allows a valid note to be added', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/);
 
-  const response = await api.get('/api/blogs');
+  const postsAtEnd = await helper.blogsInDb();
+  expect(postsAtEnd).toHaveLength(helper.initialPosts.length + 1);
 
-  const contents = response.body.map((res) => res.title);
-
-  expect(response.body).toHaveLength(initialPosts.length + 1);
+  const contents = postsAtEnd.map((post) => post.title);
   expect(contents).toContain('Blog 4');
 });
 
@@ -85,9 +70,9 @@ test('blog post without title is not added', async () => {
 
   await api.post('/api/blogs').send(newPost).expect(400);
 
-  const response = await api.get('/api/blogs');
+  const postsAtEnd = await helper.blogsInDb();
 
-  expect(response.body).toHaveLength(initialPosts.length);
+  expect(postsAtEnd).toHaveLength(helper.initialPosts.length);
 });
 
 test('blog post without url is not added', async () => {
@@ -99,13 +84,37 @@ test('blog post without url is not added', async () => {
 
   await api.post('/api/blogs').send(newPost).expect(400);
 
-  const response = await api.get('/api/blogs');
+  const postsAtEnd = await helper.blogsInDb();
 
-  expect(response.body).toHaveLength(initialPosts.length);
+  expect(postsAtEnd).toHaveLength(helper.initialPosts.length);
+});
+
+test('it allows a single blog to be retrieved', async () => {
+  const postsAtStart = await helper.blogsInDb();
+  const postToFind = postsAtStart[0];
+
+  const resultPost = await api
+    .get(`/api/blogs/${postToFind.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/);
+
+  const processedPost = JSON.parse(JSON.stringify(postToFind));
+  expect(resultPost.body).toEqual(processedPost);
 });
 
 test('it allows a single blog to be deleted', async () => {
-  // const blogsAtStart = await
+  const postsAtStart = await helper.blogsInDb();
+  const postToDelete = postsAtStart[0];
+
+  await api.delete(`/api/blogs/${postToDelete.id}`).expect(204);
+
+  const postsAtEnd = await helper.blogsInDb();
+
+  expect(postsAtEnd).toHaveLength(helper.initialPosts.length - 1);
+
+  const contents = postsAtEnd.map((resp) => resp.title);
+
+  expect(contents).not.toContain(postToDelete.title);
 });
 
 afterAll(() => {

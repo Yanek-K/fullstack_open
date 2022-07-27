@@ -1,3 +1,4 @@
+const blog = require('../models/blog');
 const Blog = require('../models/blog');
 
 const initialPosts = [
@@ -22,4 +23,15 @@ const nonExistingId = async () => {
     url: 'https://www.blogforyou.com',
     likes: 200,
   });
+  await blog.save();
+  await blog.remove();
+
+  return blog.id.toString();
 };
+
+const blogsInDb = async () => {
+  const posts = await Blog.find({});
+  return posts.map((post) => post.toJSON());
+};
+
+module.exports = { initialPosts, nonExistingId, blogsInDb };
