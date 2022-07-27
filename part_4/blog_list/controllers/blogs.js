@@ -7,15 +7,11 @@ blogRouter.get('/', async (request, response) => {
 });
 
 blogRouter.get('/:id', async (request, response, next) => {
-  try {
-    const post = await Blog.findById(request.params.id);
-    if (post) {
-      response.json(post);
-    } else {
-      response.status(404).end();
-    }
-  } catch (exception) {
-    next(exception);
+  const post = await Blog.findById(request.params.id);
+  if (post) {
+    response.json(post);
+  } else {
+    response.status(404).end();
   }
 });
 
@@ -28,21 +24,14 @@ blogRouter.post('/', async (request, response, next) => {
     url: body.url,
     likes: body.likes ? body.likes : 0,
   });
-  try {
-    const savedPost = await blog.save();
-    response.status(201).json(savedPost);
-  } catch (error) {
-    next(error);
-  }
+
+  const savedPost = await blog.save();
+  response.status(201).json(savedPost);
 });
 
 blogRouter.delete('/:id', async (request, response, next) => {
-  try {
-    await Blog.findByIdAndRemove(request.params.id);
-    response.status(204).end();
-  } catch (exception) {
-    next(exception);
-  }
+  await Blog.findByIdAndRemove(request.params.id);
+  response.status(204).end();
 });
 
 blogRouter.put('/:id', async (request, response, next) => {

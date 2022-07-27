@@ -1,4 +1,3 @@
-const blog = require('../models/blog');
 const Blog = require('../models/blog');
 
 const initialPosts = [
@@ -17,7 +16,7 @@ const initialPosts = [
 ];
 
 const nonExistingId = async () => {
-  const note = new Blog({
+  const blog = new Blog({
     title: 'Blog 2',
     author: 'You',
     url: 'https://www.blogforyou.com',
