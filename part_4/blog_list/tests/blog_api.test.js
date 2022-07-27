@@ -104,6 +104,10 @@ test('blog post without url is not added', async () => {
   expect(response.body).toHaveLength(initialPosts.length);
 });
 
+test('it allows a single blog to be deleted', async () => {
+  // const blogsAtStart = await
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
