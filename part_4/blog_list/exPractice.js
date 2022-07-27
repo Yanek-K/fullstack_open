@@ -147,9 +147,6 @@ const mostLikes = (blogs) => {
     }
   }
 };
-
-console.log(mostLikes(blogs));
-
 const mostBlogs = (blogs) => {
   if (blogs.length === 0) {
     return '';

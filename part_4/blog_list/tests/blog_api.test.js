@@ -117,6 +117,18 @@ test('it allows a single blog to be deleted', async () => {
   expect(contents).not.toContain(postToDelete.title);
 });
 
+test('it allows the likes of a post to be updated', async () => {
+  const postsAtStart = await helper.blogsInDb();
+  const postToUpdate = postsAtStart[0];
+
+  const updatedPost = await api
+    .put(`/api/blogs/${postToUpdate.id}`)
+    .send({ ...postToUpdate, likes: 201 })
+    .expect(200);
+
+  expect(updatedPost.body.likes).toEqual(201);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
