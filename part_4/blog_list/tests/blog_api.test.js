@@ -141,8 +141,6 @@ describe('Viewing a specific post', () => {
   test('It fails with a statuscode 404 if post does not exist', async () => {
     const validNonExistingId = await helper.nonExistingId();
 
-    console.log(validNonExistingId);
-
     await api.get(`/api/notes/${validNonExistingId}`).expect(404);
   });
 });
@@ -157,7 +155,7 @@ describe('When there is initially one user in the DB', () => {
     await user.save();
   });
 
-  test('It allows creation of a new user', async () => {
+  test('it allows creation of a new user', async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
@@ -178,8 +176,94 @@ describe('When there is initially one user in the DB', () => {
     const usernames = usersAtEnd.map((user) => user.username);
     expect(usernames).toContain(newUser.username);
   });
-});
 
+  test('it does not allow an invalid username (less than 3 characters)', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: 'Ap',
+      name: 'Ap',
+      password: 'salainen',
+    };
+
+    const createUser = await api.post('/api/users').send(newUser);
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+    expect(() =>
+      createUser.rejects
+        .toThrowError('shorter than the minimum allowed length (3).')
+        .expect(400)
+    );
+  });
+
+  test('it does not allow a blank username', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: '',
+      name: 'Ap',
+      password: 'salainen',
+    };
+
+    const createUser = await api.post('/api/users').send(newUser);
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+    expect(() => createUser.rejects.toThrow().expect(400));
+  });
+
+  test('it does not allow a non-unique username', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: 'root',
+      name: 'root',
+      password: 'salainen',
+    };
+
+    const createUser = await api.post('/api/users').send(newUser).expect(422);
+    console.log(createUser);
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+    expect(() => createUser.toThrow('Octopus'));
+  });
+
+  test('it does not allow an invalid password (less than 3 characters)', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: 'Apple',
+      name: 'Apple',
+      password: 'sa',
+    };
+
+    await api.post('/api/users').send(newUser).expect(400);
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test('it does not allow a blank password', async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: 'Apple',
+      name: 'Apple',
+      password: '',
+    };
+
+    await api.post('/api/users').send(newUser).expect(400);
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+});
 afterAll(() => {
   mongoose.connection.close();
 });
