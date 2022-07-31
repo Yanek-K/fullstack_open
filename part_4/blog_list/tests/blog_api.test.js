@@ -186,16 +186,18 @@ describe('When there is initially one user in the DB', () => {
       password: 'salainen',
     };
 
-    const createUser = await api.post('/api/users').send(newUser);
+    try {
+      await api.post('/api/users').send(newUser);
+    } catch (e) {
+      expect(e.message)
+        .toEqual(
+          'User validation failed: username: Path `username` (`z`) is shorter than the minimum allowed length (3).'
+        )
+        .expect(400);
+    }
 
     const usersAtEnd = await helper.usersInDb();
-
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
-    expect(() =>
-      createUser.rejects
-        .toThrowError('shorter than the minimum allowed length (3).')
-        .expect(400)
-    );
   });
 
   test('it does not allow a blank username', async () => {
@@ -207,12 +209,18 @@ describe('When there is initially one user in the DB', () => {
       password: 'salainen',
     };
 
-    const createUser = await api.post('/api/users').send(newUser);
+    try {
+      await api.post('/api/users').send(newUser);
+    } catch (e) {
+      expect(e.message)
+        .toEqual(
+          'User validation failed: username: Path `username` is required.'
+        )
+        .expect(400);
+    }
 
     const usersAtEnd = await helper.usersInDb();
-
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
-    expect(() => createUser.rejects.toThrow().expect(400));
   });
 
   test('it does not allow a non-unique username', async () => {
@@ -224,12 +232,14 @@ describe('When there is initially one user in the DB', () => {
       password: 'salainen',
     };
 
-    const createUser = await api.post('/api/users').send(newUser).expect(422);
-    console.log(createUser);
-    const usersAtEnd = await helper.usersInDb();
+    try {
+      await api.post('/api/users').send(newUser);
+    } catch (e) {
+      expect(e.message).toEqual('Username already exists').expect(422);
+    }
 
+    const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
-    expect(() => createUser.toThrow('Octopus'));
   });
 
   test('it does not allow an invalid password (less than 3 characters)', async () => {
@@ -241,10 +251,15 @@ describe('When there is initially one user in the DB', () => {
       password: 'sa',
     };
 
-    await api.post('/api/users').send(newUser).expect(400);
+    try {
+      await api.post('/api/users').send(newUser);
+    } catch (e) {
+      expect(e.message)
+        .toEqual('Password must contain at least 3 characters')
+        .expect(400);
+    }
 
     const usersAtEnd = await helper.usersInDb();
-
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 
@@ -257,13 +272,19 @@ describe('When there is initially one user in the DB', () => {
       password: '',
     };
 
-    await api.post('/api/users').send(newUser).expect(400);
+    try {
+      await api.post('/api/users').send(newUser);
+    } catch (e) {
+      expect(e.message)
+        .toEqual('Password must contain at least 3 characters')
+        .expect(400);
+    }
 
     const usersAtEnd = await helper.usersInDb();
-
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 });
+
 afterAll(() => {
   mongoose.connection.close();
 });
