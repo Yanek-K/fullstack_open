@@ -12,10 +12,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  notes: [
+  blog: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Note',
+      ref: 'Blog',
     },
   ],
 });
