@@ -42,8 +42,21 @@ blogRouter.post('/', async (request, response) => {
 });
 
 blogRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id);
-  response.status(204).end();
+  if (!request.token || !request.decodedToken) {
+    return response.status(401).json({ error: 'token missing or invalid' });
+  }
+
+  const user = await User.findById(request.decodedToken.id);
+  const blog = await Blog.findById(request.params.id);
+
+  if (blog.user.toString() === user.id.toString()) {
+    await Blog.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } else {
+    return response
+      .status(401)
+      .json({ error: 'Permission to delete this blog denied' });
+  }
 });
 
 blogRouter.put('/:id', async (request, response, next) => {
