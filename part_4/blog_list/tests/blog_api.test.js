@@ -6,15 +6,19 @@ const app = require('../app');
 const Blog = require('../models/blog');
 const helper = require('./test_helper');
 const User = require('../models/user');
+const { request } = require('express');
 
 const api = supertest(app);
 
 beforeEach(async () => {
+  // delete all posts and create two new posts
   await Blog.deleteMany({});
   let blogObject = new Blog(helper.initialPosts[0]);
   await blogObject.save();
   blogObject = new Blog(helper.initialPosts[1]);
   await blogObject.save();
+
+  // get a user token
 });
 
 describe('When there is initially some posts saved', () => {
@@ -111,7 +115,8 @@ describe('Viewing a specific post', () => {
     expect(resultPost.body).toEqual(processedPost);
   });
 
-  test('it allows a single blog to be deleted', async () => {
+  // This should not be working - a user can only delete a post that they have created
+  test('it allows a single blog to be deleted by user who created it', async () => {
     const postsAtStart = await helper.blogsInDb();
     const postToDelete = postsAtStart[0];
 
@@ -126,6 +131,7 @@ describe('Viewing a specific post', () => {
     expect(contents).not.toContain(postToDelete.title);
   });
 
+  // Should not be working - need to add code to put request
   test('it allows the likes of a post to be updated', async () => {
     const postsAtStart = await helper.blogsInDb();
     const postToUpdate = postsAtStart[0];
@@ -145,7 +151,7 @@ describe('Viewing a specific post', () => {
   });
 });
 
-describe('When there is initially one user in the DB', () => {
+describe('When there is initially one user in the DB and want to create a new user', () => {
   beforeEach(async () => {
     await User.deleteMany({});
 

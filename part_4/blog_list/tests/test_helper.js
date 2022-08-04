@@ -39,4 +39,9 @@ const usersInDb = async () => {
   return users.map((user) => user.toJSON());
 };
 
+const singleUser = async (request, response) => {
+  const singleUser = await request.user;
+  console.log(singleUser);
+};
+
 module.exports = { initialPosts, nonExistingId, blogsInDb, usersInDb };
