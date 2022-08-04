@@ -1,4 +1,7 @@
+const jwt = require('jsonwebtoken');
 const logger = require('./logger');
+
+require('dotenv').config();
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method);
@@ -38,6 +41,12 @@ const tokenExtractor = async (request, response, next) => {
     request.token = authorization.substring(7);
   } else {
     request.token = null;
+  }
+  try {
+    const decodedToken = await jwt.verify(request.token, process.env.SECRET);
+    request.decodedToken = decodedToken;
+  } catch (error) {
+    request.decodedToken = null;
   }
 
   next();
