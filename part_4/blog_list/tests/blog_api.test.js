@@ -7,6 +7,10 @@ const Blog = require('../models/blog');
 const helper = require('./test_helper');
 const User = require('../models/user');
 const { request } = require('express');
+const loginRouter = require('../controllers/login');
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config();
 
 const api = supertest(app);
 
@@ -20,6 +24,19 @@ beforeEach(async () => {
 
   // get a user token
 });
+
+const getToken = () => {
+  const user = {
+    username: 'root',
+    id: '62e9f2f603cc68790db400e7',
+  };
+
+  const token = jwt.sign(user, process.env.SECRET);
+
+  console.log(token);
+};
+
+getToken();
 
 describe('When there is initially some posts saved', () => {
   test('it returns blog posts as json', async () => {
@@ -57,6 +74,7 @@ describe('Addition of a new post', () => {
       author: 'Him',
       url: 'https://www.blogforhim.com',
       likes: 32,
+      user: '62e9f2f603cc68790db400e7',
     };
 
     await api
