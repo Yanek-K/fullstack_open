@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 
@@ -6,37 +7,32 @@ const app = require('../app');
 const Blog = require('../models/blog');
 const helper = require('./test_helper');
 const User = require('../models/user');
-const { request } = require('express');
-const loginRouter = require('../controllers/login');
-const jwt = require('jsonwebtoken');
-
-require('dotenv').config();
-
 const api = supertest(app);
 
+let token;
 beforeEach(async () => {
-  // delete all posts and create two new posts
-  await Blog.deleteMany({});
-  let blogObject = new Blog(helper.initialPosts[0]);
-  await blogObject.save();
-  blogObject = new Blog(helper.initialPosts[1]);
-  await blogObject.save();
-
-  // get a user token
-});
-
-const getToken = () => {
-  const user = {
+  await User.deleteMany({});
+  const passwordHash = await bcrypt.hash('salasana', 10);
+  const user = new User({
     username: 'root',
-    id: '62e9f2f603cc68790db400e7',
+    name: 'Master',
+    passwordHash,
+  });
+  await user.save();
+
+  const userForToken = {
+    username: user.username,
+    id: user.id,
   };
 
-  const token = jwt.sign(user, process.env.SECRET);
+  token = jwt.sign(userForToken, process.env.SECRET);
 
-  console.log(token);
-};
-
-getToken();
+  await Blog.deleteMany({});
+  blogs = helper.initialBlogs.map(
+    (blog) => new Blog({ ...blog, user: user.id })
+  );
+  await Blog.insertMany(helper.initialBlogs);
+});
 
 describe('When there is initially some posts saved', () => {
   test('it returns blog posts as json', async () => {
@@ -49,14 +45,14 @@ describe('When there is initially some posts saved', () => {
   test('it returns all notes from the database', async () => {
     const response = await api.get('/api/blogs');
 
-    expect(response.body).toHaveLength(helper.initialPosts.length);
+    expect(response.body).toHaveLength(helper.initialBlogs.length);
   });
 
   test('it returns a specific note from the database', async () => {
     const response = await api.get('/api/blogs');
 
     const titles = response.body.map((res) => res.title);
-    expect(titles).toContain('Blog 2');
+    expect(titles).toContain('First class tests');
   });
 
   test('it uses a parameter named "id" for the unique identifier', async () => {
@@ -80,11 +76,12 @@ describe('Addition of a new post', () => {
     await api
       .post('/api/blogs')
       .send(newPost)
+      .set('Authorization', `bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
     const postsAtEnd = await helper.blogsInDb();
-    expect(postsAtEnd).toHaveLength(helper.initialPosts.length + 1);
+    expect(postsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 
     const contents = postsAtEnd.map((post) => post.title);
     expect(contents).toContain('Blog 4');
@@ -97,11 +94,15 @@ describe('Addition of a new post', () => {
       likes: '',
     };
 
-    await api.post('/api/blogs').send(newPost).expect(400);
+    await api
+      .post('/api/blogs')
+      .send(newPost)
+      .set('Authorization', `bearer ${token}`)
+      .expect(400);
 
     const postsAtEnd = await helper.blogsInDb();
 
-    expect(postsAtEnd).toHaveLength(helper.initialPosts.length);
+    expect(postsAtEnd).toHaveLength(helper.initialBlogs.length);
   });
 
   test('blog post without url is not added', async () => {
@@ -111,11 +112,15 @@ describe('Addition of a new post', () => {
       likes: '',
     };
 
-    await api.post('/api/blogs').send(newPost).expect(400);
+    await api
+      .post('/api/blogs')
+      .send(newPost)
+      .set('Authorization', `bearer ${token}`)
+      .expect(400);
 
     const postsAtEnd = await helper.blogsInDb();
 
-    expect(postsAtEnd).toHaveLength(helper.initialPosts.length);
+    expect(postsAtEnd).toHaveLength(helper.initialBlogs.length);
   });
 });
 
@@ -135,18 +140,31 @@ describe('Viewing a specific post', () => {
 
   // This should not be working - a user can only delete a post that they have created
   test('it allows a single blog to be deleted by user who created it', async () => {
-    const postsAtStart = await helper.blogsInDb();
-    const postToDelete = postsAtStart[0];
+    const newBlog = {
+      title: 'Full Stack',
+      author: 'StackMaster',
+      url: 'https://www.stack.com/',
+      likes: 1,
+    };
 
-    await api.delete(`/api/blogs/${postToDelete.id}`).expect(204);
+    const result = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `bearer ${token}`);
+
+    await api.get(`/api/blogs/${result.body.id}`);
+    await api
+      .delete(`/api/blogs/${result.body.id}`)
+      .set('Authorization', `bearer ${token}`)
+      .expect(204);
 
     const postsAtEnd = await helper.blogsInDb();
 
-    expect(postsAtEnd).toHaveLength(helper.initialPosts.length - 1);
+    expect(postsAtEnd).toHaveLength(helper.initialBlogs.length);
 
     const contents = postsAtEnd.map((resp) => resp.title);
 
-    expect(contents).not.toContain(postToDelete.title);
+    expect(contents).not.toContain(newBlog.title);
   });
 
   // Should not be working - need to add code to put request
@@ -166,146 +184,6 @@ describe('Viewing a specific post', () => {
     const validNonExistingId = await helper.nonExistingId();
 
     await api.get(`/api/notes/${validNonExistingId}`).expect(404);
-  });
-});
-
-describe('When there is initially one user in the DB and want to create a new user', () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-
-    const passwordHash = await bcrypt.hash('secret', 10);
-    const user = new User({ username: 'root', passwordHash });
-
-    await user.save();
-  });
-
-  test('it allows creation of a new user', async () => {
-    const usersAtStart = await helper.usersInDb();
-
-    const newUser = {
-      username: 'peterpan',
-      name: 'Peter Pan',
-      password: 'salainen',
-    };
-
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(201)
-      .expect('Content-Type', /application\/json/);
-
-    const usersAtEnd = await helper.usersInDb();
-    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
-
-    const usernames = usersAtEnd.map((user) => user.username);
-    expect(usernames).toContain(newUser.username);
-  });
-
-  test('it does not allow an invalid username (less than 3 characters)', async () => {
-    const usersAtStart = await helper.usersInDb();
-
-    const newUser = {
-      username: 'Ap',
-      name: 'Ap',
-      password: 'salainen',
-    };
-
-    try {
-      await api.post('/api/users').send(newUser);
-    } catch (e) {
-      expect(e.message)
-        .toEqual(
-          'User validation failed: username: Path `username` (`z`) is shorter than the minimum allowed length (3).'
-        )
-        .expect(400);
-    }
-
-    const usersAtEnd = await helper.usersInDb();
-    expect(usersAtEnd).toHaveLength(usersAtStart.length);
-  });
-
-  test('it does not allow a blank username', async () => {
-    const usersAtStart = await helper.usersInDb();
-
-    const newUser = {
-      username: '',
-      name: 'Ap',
-      password: 'salainen',
-    };
-
-    try {
-      await api.post('/api/users').send(newUser);
-    } catch (e) {
-      expect(e.message)
-        .toEqual(
-          'User validation failed: username: Path `username` is required.'
-        )
-        .expect(400);
-    }
-
-    const usersAtEnd = await helper.usersInDb();
-    expect(usersAtEnd).toHaveLength(usersAtStart.length);
-  });
-
-  test('it does not allow a non-unique username', async () => {
-    const usersAtStart = await helper.usersInDb();
-
-    const newUser = {
-      username: 'root',
-      name: 'root',
-      password: 'salainen',
-    };
-
-    try {
-      await api.post('/api/users').send(newUser);
-    } catch (e) {
-      expect(e.message).toEqual('Username already exists').expect(422);
-    }
-
-    const usersAtEnd = await helper.usersInDb();
-    expect(usersAtEnd).toHaveLength(usersAtStart.length);
-  });
-
-  test('it does not allow an invalid password (less than 3 characters)', async () => {
-    const usersAtStart = await helper.usersInDb();
-
-    const newUser = {
-      username: 'Apple',
-      name: 'Apple',
-      password: 'sa',
-    };
-
-    try {
-      await api.post('/api/users').send(newUser);
-    } catch (e) {
-      expect(e.message)
-        .toEqual('Password must contain at least 3 characters')
-        .expect(400);
-    }
-
-    const usersAtEnd = await helper.usersInDb();
-    expect(usersAtEnd).toHaveLength(usersAtStart.length);
-  });
-
-  test('it does not allow a blank password', async () => {
-    const usersAtStart = await helper.usersInDb();
-
-    const newUser = {
-      username: 'Apple',
-      name: 'Apple',
-      password: '',
-    };
-
-    try {
-      await api.post('/api/users').send(newUser);
-    } catch (e) {
-      expect(e.message)
-        .toEqual('Password must contain at least 3 characters')
-        .expect(400);
-    }
-
-    const usersAtEnd = await helper.usersInDb();
-    expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 });
 

@@ -6,7 +6,8 @@
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
     "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
-    "oneTest": "NODE_ENV=test npm test -- tests/blog_api.test.js"
+    "blogTest": "NODE_ENV=test npm test -- tests/blog_api.test.js",
+    "userTest": "NODE_ENV=test npm test -- tests/user_api.test.js"
   },
   "author": "",
   "license": "ISC",
