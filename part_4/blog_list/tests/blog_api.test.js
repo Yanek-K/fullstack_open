@@ -122,6 +122,17 @@ describe('Addition of a new post', () => {
 
     expect(postsAtEnd).toHaveLength(helper.initialBlogs.length);
   });
+
+  test('adding a blog fails if a token is not provided', async () => {
+    const newPost = {
+      title: 'This is it',
+      author: 'Lisa Dias',
+      likes: '12',
+    };
+    await api.post('/api/blogs').send(newPost).expect(401);
+    const postsAtEnd = await helper.blogsInDb();
+    expect(postsAtEnd).toHaveLength(helper.initialBlogs.length);
+  });
 });
 
 describe('Viewing a specific post', () => {
