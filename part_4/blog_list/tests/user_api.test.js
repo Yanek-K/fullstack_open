@@ -3,12 +3,8 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 
 const app = require('../app');
-const Blog = require('../models/blog');
 const helper = require('./test_helper');
 const User = require('../models/user');
-const { request } = require('express');
-const loginRouter = require('../controllers/login');
-const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 

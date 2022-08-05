@@ -149,7 +149,6 @@ describe('Viewing a specific post', () => {
     expect(resultPost.body).toEqual(processedPost);
   });
 
-  // This should not be working - a user can only delete a post that they have created
   test('it allows a single blog to be deleted by user who created it', async () => {
     const newBlog = {
       title: 'Full Stack',
@@ -178,7 +177,6 @@ describe('Viewing a specific post', () => {
     expect(contents).not.toContain(newBlog.title);
   });
 
-  // Should not be working - need to add code to put request
   test('it allows the likes of a post to be updated', async () => {
     const postsAtStart = await helper.blogsInDb();
     const postToUpdate = postsAtStart[0];
