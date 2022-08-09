@@ -5,6 +5,7 @@ import loginService from './services/login';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
+  const [newBlog, setNewBlog] = useState({});
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
@@ -31,10 +32,10 @@ const App = () => {
         username,
         password,
       });
-
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
-      console.log('Login Successful');
+      blogService.setToken(user.token);
       setUser(user);
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
+
       setPassword('');
     } catch (error) {
       console.log(error.message);
@@ -44,6 +45,27 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser');
     setUser(null);
+  };
+
+  const handleBlogChange = (event) => {
+    setNewBlog(event.target.value);
+  };
+
+  const addBlog = (event) => {
+    event.preventDefault();
+    const blogObject = newBlog;
+
+    blogService.create(blogObject).then((returnedBlog) => {
+      setBlogs.blogs.concat(returnedBlog);
+      setNewBlog('');
+    });
+  };
+
+  const blogForm = () => {
+    <form onSubmit={addBlog}>
+      <input value={newBlog} onChange={handleBlogChange} />
+      <button type='submit'>Save</button>
+    </form>;
   };
 
   if (user === null) {
@@ -80,7 +102,10 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      <p>{username} Logged In!</p>
+      <div>
+        <p>{username} Logged In!</p>
+        {blogForm()}
+      </div>
       <button onClick={handleLogout}>Logout</button>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
