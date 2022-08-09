@@ -5,7 +5,10 @@ import loginService from './services/login';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [newBlog, setNewBlog] = useState({});
+  const [newTitle, setNewTitle] = useState();
+  const [newAuthor, setNewAuthor] = useState();
+  const [newUrl, setNewUrl] = useState();
+  const [newLikes, setNewLikes] = useState();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
@@ -47,25 +50,23 @@ const App = () => {
     setUser(null);
   };
 
-  const handleBlogChange = (event) => {
-    setNewBlog(event.target.value);
-  };
+  const handleNewTitle = (e) => setNewTitle(e.target.value);
+  const handleNewAuthor = (e) => setNewAuthor(e.target.value);
+  const handleNewUrl = (e) => setNewUrl(e.target.value);
+  const handleNewLikes = (e) => setNewLikes(e.target.value);
 
   const addBlog = (event) => {
     event.preventDefault();
-    const blogObject = newBlog;
+    const blogObject = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl,
+      likes: newLikes,
+    };
 
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs.blogs.concat(returnedBlog);
-      setNewBlog('');
     });
-  };
-
-  const blogForm = () => {
-    <form onSubmit={addBlog}>
-      <input value={newBlog} onChange={handleBlogChange} />
-      <button type='submit'>Save</button>
-    </form>;
   };
 
   if (user === null) {
@@ -104,7 +105,25 @@ const App = () => {
       <h2>Blogs</h2>
       <div>
         <p>{username} Logged In!</p>
-        {blogForm()}
+        <form onSubmit={addBlog}>
+          <div>
+            Title
+            <input value={newTitle} onChange={handleNewTitle} />
+          </div>
+          <div>
+            Author
+            <input value={newAuthor} onChange={handleNewAuthor} />
+          </div>
+          <div>
+            Url
+            <input value={newUrl} onChange={handleNewUrl} />
+          </div>
+          <div>
+            Likes
+            <input value={newLikes} onChange={handleNewLikes} />
+          </div>
+          <button type='submit'>Save</button>
+        </form>
       </div>
       <button onClick={handleLogout}>Logout</button>
       {blogs.map((blog) => (
