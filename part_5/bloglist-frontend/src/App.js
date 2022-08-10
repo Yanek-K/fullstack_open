@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import Blog from './components/Blog';
+import Notification from './components/Notification';
 import blogService from './services/blogs';
 import loginService from './services/login';
+
+import './index.css';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -12,6 +15,7 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -41,13 +45,26 @@ const App = () => {
 
       setPassword('');
     } catch (error) {
-      console.log(error.message);
+      setNotificationMessage({
+        text: 'Wrong Username or Password',
+        type: 'error',
+      });
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
     }
   };
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser');
     setUser(null);
+    setNotificationMessage({
+      text: 'Succesfully Logged Out',
+      type: 'Success',
+    });
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
   };
 
   const handleNewTitle = (e) => setNewTitle(e.target.value);
@@ -64,15 +81,35 @@ const App = () => {
       likes: newLikes,
     };
 
-    blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs.blogs.concat(returnedBlog);
-    });
+    blogService
+      .create(blogObject)
+      .then((returnedBlog) => {
+        setBlogs(blogs.concat(returnedBlog));
+      })
+      .then(() => {
+        setNotificationMessage({
+          text: `${newTitle} by ${newAuthor} succesfully added to the blog`,
+          type: 'success',
+        });
+      })
+      .catch((error) => {
+        setNotificationMessage({
+          text: `Title or Url Missing`,
+          type: 'error',
+        });
+      });
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
   };
 
   if (user === null) {
     return (
       <div>
         <h2>Login to the Blog</h2>
+        {notificationMessage !== null ? (
+          <Notification notificationMessage={notificationMessage} />
+        ) : null}
 
         <form onSubmit={handleLogin}>
           <div>
@@ -103,6 +140,9 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
+      {notificationMessage !== null ? (
+        <Notification notificationMessage={notificationMessage} />
+      ) : null}
       <div>
         <p>{username} Logged In!</p>
         <form onSubmit={addBlog}>
