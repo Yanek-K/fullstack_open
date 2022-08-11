@@ -21,6 +21,9 @@ const BlogForm = ({ createBlog }) => {
       likes: newLikes,
     });
     setNewTitle('');
+    setNewAuthor('');
+    setNewUrl('');
+    setNewLikes('');
   };
 
   return (
