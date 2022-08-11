@@ -10,16 +10,13 @@ import Togglable from './components/Togglable';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [newTitle, setNewTitle] = useState();
-  const [newAuthor, setNewAuthor] = useState();
-  const [newUrl, setNewUrl] = useState();
-  const [newLikes, setNewLikes] = useState();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [notificationMessage, setNotificationMessage] = useState(null);
-  console.log(blogs);
+
   const blogFormRef = useRef();
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
@@ -63,7 +60,7 @@ const App = () => {
     setUser(null);
     setNotificationMessage({
       text: 'Succesfully Logged Out',
-      type: 'Success',
+      type: 'success',
     });
     setTimeout(() => {
       setNotificationMessage(null);
