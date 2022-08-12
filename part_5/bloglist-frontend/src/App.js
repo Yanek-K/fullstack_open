@@ -22,7 +22,7 @@ const App = () => {
     blogs.sort((a, b) => {
       return b.likes - a.likes;
     });
-  }, []);
+  }, [blogs]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
@@ -119,6 +119,34 @@ const App = () => {
     }, 5000);
   };
 
+  const deleteBlog = (blogToDelete) => {
+    console.log(blogToDelete);
+    if (
+      window.confirm(
+        `Delete ${blogToDelete.title} by ${blogToDelete.author}`
+      ) === true
+    ) {
+      blogService
+        .deleteBlog(blogToDelete.id)
+        .then(() => {
+          setNotificationMessage({
+            text: `${blogToDelete.title} was successfully deleted`,
+            type: 'success',
+          });
+          setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
+        })
+        .catch((error) => {
+          setNotificationMessage({
+            text: `Hmm, something went wrong`,
+            type: 'error',
+          });
+        });
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
+    }
+  };
+
   if (user === null) {
     return (
       <div>
@@ -162,7 +190,7 @@ const App = () => {
       <div>
         <p>{user.name} Logged In!</p>
         <button onClick={handleLogout}>Logout</button>
-        <Togglable buttonLabel='New Blog' ref={blogFormRef}>
+        <Togglable openLabel='New Blog' closeLabel='Cancel' ref={blogFormRef}>
           <BlogForm createBlog={addBlog} />
         </Togglable>
 
@@ -173,6 +201,8 @@ const App = () => {
               key={blog.id}
               blog={blog}
               increaseLikes={() => increaseLikes(blog.id)}
+              deleteBlog={() => deleteBlog(blog)}
+              user={user}
             />
           ))}
       </div>
