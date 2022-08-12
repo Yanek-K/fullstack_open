@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
+import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
-
 import './index.css';
-import BlogForm from './components/BlogForm';
-import Togglable from './components/Togglable';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);

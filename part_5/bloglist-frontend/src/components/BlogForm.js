@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import React from 'react';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
 const BlogForm = ({ createBlog }) => {
   const [newTitle, setNewTitle] = useState();
