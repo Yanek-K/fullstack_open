@@ -106,7 +106,6 @@ const App = () => {
       .update(changedBlog)
       .then((returnedBlog) => {
         setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
-        console.log(returnedBlog);
       })
       .catch((error) => {
         setNotificationMessage({
