@@ -3,7 +3,6 @@ import BlogInfo from './BlogInfo';
 import Togglable from './Togglable';
 
 const Blog = ({ blog, increaseLikes }) => {
-  console.log(blog);
   const blogStyle = {
     paddingTop: 10,
     paddingBottom: 10,

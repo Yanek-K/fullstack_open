@@ -92,7 +92,11 @@ const App = () => {
 
   const increaseLikes = (id) => {
     const blog = blogs.find((blog) => blog.id === id);
-    const changedBlog = { ...blog, likes: (blog.likes += 1) };
+    const changedBlog = {
+      ...blog,
+      likes: (blog.likes += 1),
+      user: blog.user,
+    };
 
     blogService
       .update(changedBlog)
