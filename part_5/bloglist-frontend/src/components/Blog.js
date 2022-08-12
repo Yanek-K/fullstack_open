@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import BlogInfo from './BlogInfo';
 import Togglable from './Togglable';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, increaseLikes }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingBottom: 10,
@@ -17,7 +17,7 @@ const Blog = ({ blog }) => {
       <br />
       Author: {blog.author}
       <Togglable buttonLabel='View More'>
-        <BlogInfo blog={blog} />
+        <BlogInfo blog={blog} increaseLikes={increaseLikes} />
       </Togglable>
     </div>
   );
