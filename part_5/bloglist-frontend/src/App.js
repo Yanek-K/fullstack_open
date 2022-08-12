@@ -39,8 +39,9 @@ const App = () => {
         username,
         password,
       });
-      blogService.setToken(user.token);
       setUser(user);
+      blogService.setToken(user.token);
+
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
 
       setPassword('');
@@ -68,7 +69,6 @@ const App = () => {
   };
 
   const addBlog = (blogObject) => {
-    console.log(blogObject);
     blogService
       .create(blogObject)
       .then((returnedBlog) => {
@@ -83,6 +83,31 @@ const App = () => {
       .catch((error) => {
         setNotificationMessage({
           text: `Title or Url Missing`,
+          type: 'error',
+        });
+      });
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
+  };
+
+  const increaseLikes = (id) => {
+    const blog = blogs.find((blog) => blog.id === id);
+    const changedBlog = {
+      ...blog,
+      likes: (blog.likes += 1),
+      user: blog.user,
+    };
+
+    blogService
+      .update(changedBlog)
+      .then((returnedBlog) => {
+        setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
+        console.log(returnedBlog);
+      })
+      .catch((error) => {
+        setNotificationMessage({
+          text: 'Something went wrong',
           type: 'error',
         });
       });
@@ -132,14 +157,18 @@ const App = () => {
         <Notification notificationMessage={notificationMessage} />
       ) : null}
       <div>
-        <p>{username} Logged In!</p>
+        <p>{user.name} Logged In!</p>
         <button onClick={handleLogout}>Logout</button>
         <Togglable buttonLabel='New Blog' ref={blogFormRef}>
           <BlogForm createBlog={addBlog} />
         </Togglable>
 
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            increaseLikes={() => increaseLikes(blog.id)}
+          />
         ))}
       </div>
     </div>
