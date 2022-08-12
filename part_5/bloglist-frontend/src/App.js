@@ -82,9 +82,9 @@ const App = () => {
           type: 'success',
         });
       })
-      .catch((error) => {
+      .catch(() => {
         setNotificationMessage({
-          text: `Title or Url Missing`,
+          text: 'Title or Url Missing',
           type: 'error',
         });
       });
@@ -106,7 +106,7 @@ const App = () => {
       .then((returnedBlog) => {
         setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
       })
-      .catch((error) => {
+      .catch(() => {
         setNotificationMessage({
           text: 'Something went wrong',
           type: 'error',
@@ -133,9 +133,9 @@ const App = () => {
           });
           setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
         })
-        .catch((error) => {
+        .catch(() => {
           setNotificationMessage({
-            text: `Hmm, something went wrong`,
+            text: 'Hmm, something went wrong',
             type: 'error',
           });
         });
