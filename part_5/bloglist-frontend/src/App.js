@@ -6,6 +6,7 @@ import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import './index.css';
+import Login from './components/Login';
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
 
   const blogFormRef = useRef();
 
+  // Get all blogs
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
     blogs.sort((a, b) => {
@@ -24,6 +26,7 @@ const App = () => {
     });
   }, []);
 
+  // Check if a user is logged in
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
 
@@ -148,65 +151,37 @@ const App = () => {
 
   if (user === null) {
     return (
+      <Login handleLogin={handleLogin} username={username} password={password} notificationMessage={notificationMessage} setUsername={setUsername} setPassword={setPassword} />
+    )
+  } else {
+    return (
       <div>
-        <h2>Login to the Blog</h2>
+        <h2>Blogs</h2>
         {notificationMessage !== null ? (
           <Notification notificationMessage={notificationMessage} />
         ) : null}
+        <div>
+          <p>{user.name} Logged In!</p>
+          <button onClick={handleLogout}>Logout</button>
+          <Togglable openLabel='New Blog' closeLabel='Cancel' ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
 
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type='text'
-              value={username}
-              name='Username'
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-
-          <div>
-            password
-            <input
-              type='password'
-              value={password}
-              name='Password'
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type='submit'>Login</button>
-        </form>
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                increaseLikes={() => increaseLikes(blog.id)}
+                deleteBlog={() => deleteBlog(blog)}
+                user={user}
+              />
+            ))}
+        </div>
       </div>
     );
   }
-
-  return (
-    <div>
-      <h2>Blogs</h2>
-      {notificationMessage !== null ? (
-        <Notification notificationMessage={notificationMessage} />
-      ) : null}
-      <div>
-        <p>{user.name} Logged In!</p>
-        <button onClick={handleLogout}>Logout</button>
-        <Togglable openLabel='New Blog' closeLabel='Cancel' ref={blogFormRef}>
-          <BlogForm createBlog={addBlog} />
-        </Togglable>
-
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              increaseLikes={() => increaseLikes(blog.id)}
-              deleteBlog={() => deleteBlog(blog)}
-              user={user}
-            />
-          ))}
-      </div>
-    </div>
-  );
 };
 
 export default App;
