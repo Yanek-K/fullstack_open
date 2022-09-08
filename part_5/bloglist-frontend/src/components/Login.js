@@ -12,7 +12,7 @@ const Login = ({ handleLogin, username, password, notificationMessage, setUserna
 
       <form onSubmit={handleLogin}>
         <div>
-                    username
+          username
           <input
             type='text'
             value={username}
@@ -22,7 +22,7 @@ const Login = ({ handleLogin, username, password, notificationMessage, setUserna
         </div>
 
         <div>
-                    password
+          password
           <input
             type='password'
             value={password}
