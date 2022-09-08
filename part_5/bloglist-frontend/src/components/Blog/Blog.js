@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import BlogInfo from './BlogInfo';
-import Togglable from './Togglable';
+import BlogInfo from '../BlogInfo';
+import Togglable from '../Togglable';
 
 const Blog = ({ blog, increaseLikes, deleteBlog, user }) => {
   return (
@@ -22,8 +22,8 @@ const Blog = ({ blog, increaseLikes, deleteBlog, user }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  increaseLikes: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
+  // increaseLikes: PropTypes.func.isRequired,
+  // deleteBlog: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 };
 
