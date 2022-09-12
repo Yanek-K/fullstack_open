@@ -5,9 +5,18 @@ import Togglable from '../Togglable';
 const Blog = ({ blog, increaseLikes, deleteBlog, user }) => {
   return (
     <div className='blogStyle'>
-      Title: {blog.title}
-      <br />
-      Author: {blog.author}
+      <ul>
+        <li>
+          <p>Title:&ensp;</p>
+          <p>{blog.title}</p>
+        </li>
+        <li>
+          <p>Author:&ensp;</p>
+          <p>{blog.author}</p>
+
+        </li>
+
+      </ul>
       <Togglable openLabel='View More' closeLabel='Hide'>
         <BlogInfo
           blog={blog}

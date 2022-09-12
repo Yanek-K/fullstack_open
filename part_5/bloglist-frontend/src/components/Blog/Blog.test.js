@@ -3,26 +3,36 @@ import '@testing-library/jest-dom/extend-expect';
 import { render, screen } from '@testing-library/react';
 import Blog from './Blog'
 
-test('renders a blog title and author only', () => {
-  const blogPost = {
-    title: 'Blog 2',
-    author: 'Peter Pan',
-    url: 'www.peterspan.com',
-    likes: 0,
-    user: {
-      name: 'Peter',
-      username: 'root'
-    },
-  }
+describe('It renders the correct info by default', () => {
+  let container;
+  beforeEach(() => {
 
-  const user = {
-    name: 'Peter'
-  }
+    const blogPost = {
+      title: 'Blog 2',
+      author: 'Peter Pan',
+      url: 'www.peterspan.com',
+      likes: 0,
+      user: {
+        name: 'Peter',
+        username: 'root'
+      },
+    }
 
-  render(<Blog blog={blogPost} user={user} />)
+    const user = {
+      name: 'Peter'
+    }
+    container = render(<Blog blog={blogPost} user={user} />).container
+  })
 
+  test('it renders a blog title', () => {
+    const title = screen.getByText('Blog 2');
+    expect(title).toBeDefined();
+  })
 
-  const element = screen.getByText('Peter Pan')
-  expect(element).toBeDefined();
+  test('it renders a blog author', () => {
+    const author = screen.getByText('Peter Pan')
+    expect(author).toBeDefined();
+  })
+
 
 })
