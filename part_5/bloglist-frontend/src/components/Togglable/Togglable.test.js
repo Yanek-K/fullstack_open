@@ -8,17 +8,28 @@ describe('<Togglable />', () => {
   let container
 
   beforeEach(() => {
-    container = render
-      (<Togglable openLabel='View More' closeLabel='Hide'>
+    container = render(
+      <Togglable openLabel='View More' closeLabel='Hide'>
         <div className='testDiv'>
           togglable content
         </div>
-      </Togglable>).container
+      </Togglable>
+    ).container
   })
 
 
   test('renders its children', async () => {
     await screen.findAllByText('togglable content')
+  })
+
+  test('after clicking the button, children are displayed', async () => {
+    const user = userEvent.setup();
+    const button = screen.getByText('View More');
+    await user.click(button)
+
+    const div = container.querySelector('.togglableContent');
+    expect(div).not.toHaveStyle('display: none')
+
   })
 
 })
