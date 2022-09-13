@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog/Blog';
-import BlogForm from './components/BlogForm';
+import BlogForm from './components/BlogForm/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable/Togglable';
 import blogService from './services/blogs';

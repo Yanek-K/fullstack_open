@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 const BlogForm = ({ createBlog }) => {
-  const [newTitle, setNewTitle] = useState();
-  const [newAuthor, setNewAuthor] = useState();
-  const [newUrl, setNewUrl] = useState();
-  const [newLikes, setNewLikes] = useState();
+  const [newTitle, setNewTitle] = useState('');
+  const [newAuthor, setNewAuthor] = useState('');
+  const [newUrl, setNewUrl] = useState('');
+  const [newLikes, setNewLikes] = useState('');
 
   const handleNewTitle = (e) => setNewTitle(e.target.value);
   const handleNewAuthor = (e) => setNewAuthor(e.target.value);
@@ -13,36 +13,35 @@ const BlogForm = ({ createBlog }) => {
 
   const addBlog = (event) => {
     event.preventDefault();
+
     createBlog({
       title: newTitle,
       author: newAuthor,
       url: newUrl,
       likes: newLikes,
+
     });
     setNewTitle('');
     setNewAuthor('');
     setNewUrl('');
     setNewLikes('');
+
   };
 
   return (
     <div>
-      <form onSubmit={addBlog}>
+      <form onSubmit={addBlog} defaultValue={''}>
         <div>
-          Title
-          <input value={newTitle} onChange={handleNewTitle} />
+          <input value={newTitle} onChange={handleNewTitle} placeholder='Title' />
         </div>
         <div>
-          Author
-          <input value={newAuthor} onChange={handleNewAuthor} />
+          <input value={newAuthor} onChange={handleNewAuthor} placeholder='Author' />
         </div>
         <div>
-          Url
-          <input value={newUrl} onChange={handleNewUrl} />
+          <input value={newUrl} onChange={handleNewUrl} placeholder='Url' />
         </div>
         <div>
-          Likes
-          <input value={newLikes} onChange={handleNewLikes} />
+          <input value={newLikes} onChange={handleNewLikes} placeholder='Likes' />
         </div>
         <button type='submit'>Save</button>
       </form>

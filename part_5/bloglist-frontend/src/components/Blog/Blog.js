@@ -18,6 +18,7 @@ const Blog = ({ blog, increaseLikes, deleteBlog, user }) => {
 
       <Togglable openLabel='View More' closeLabel='Hide' >
         <BlogInfo
+
           blog={blog}
           increaseLikes={increaseLikes}
           deleteBlog={deleteBlog}
