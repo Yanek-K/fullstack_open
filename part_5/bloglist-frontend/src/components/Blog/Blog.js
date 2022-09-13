@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import BlogInfo from '../BlogInfo';
+import BlogInfo from '../BlogInfo/BlogInfo';
 import Togglable from '../Togglable/Togglable';
 
 const Blog = ({ blog, increaseLikes, deleteBlog, user }) => {
