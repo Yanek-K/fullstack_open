@@ -38,6 +38,4 @@ describe('It renders the correct info by default', () => {
     const url = container.querySelector('.togglableContent')
     expect(url).toHaveStyle('display: none')
   })
-
-
 })
