@@ -13,11 +13,10 @@ const Blog = ({ blog, increaseLikes, deleteBlog, user }) => {
         <li>
           <p>Author:&ensp;</p>
           <p>{blog.author}</p>
-
         </li>
-
       </ul>
-      <Togglable openLabel='View More' closeLabel='Hide'>
+
+      <Togglable openLabel='View More' closeLabel='Hide' >
         <BlogInfo
           blog={blog}
           increaseLikes={increaseLikes}

@@ -34,5 +34,10 @@ describe('It renders the correct info by default', () => {
     expect(author).toBeDefined();
   })
 
+  test('it hides the url and likes by default', () => {
+    const url = container.querySelector('.togglableContent')
+    expect(url).toHaveStyle('display: none')
+  })
+
 
 })
